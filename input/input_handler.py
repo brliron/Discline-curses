@@ -20,21 +20,18 @@ def key_input():
     editWin = gc.ui.editWin
     call = (ui.draw_edit_win, True)
     gc.ui_thread.funcs.append(call)
-    while call in gc.ui_thread.funcs or \
-            call[0].__name__ in gc.ui_thread.locks:
-        time.sleep(0.01)
     while not gc.doExit:
         prompt = gc.client.prompt
-        ch = editWin.getch()
-        if ch == -1 or not gc.ui.displayPanel.hidden():
+        ch = editWin.get_wch()
+        if not gc.ui.displayPanel.hidden():
             time.sleep(0.01)
             continue
 
-        if chr(ch) != '\n' and len(gc.ui.messageEdit.inputBuffer) > 0 and \
-                gc.ui.messageEdit.inputBuffer[0] != ord('/'):
+        if ch != '\n' and len(gc.ui.messageEdit.inputBuffer) > 0 and \
+                gc.ui.messageEdit.inputBuffer[0] != '/':
             gc.typingBeingHandled = True
         # prevents crashes when enter is hit and input buf is empty
-        if chr(ch) == '\n' and not gc.ui.messageEdit.inputBuffer:
+        if ch == '\n' and not gc.ui.messageEdit.inputBuffer:
             continue
         if ch == curses.KEY_PPAGE:
             gc.ui.channel_log_offset -= settings["scroll_lines"]
@@ -49,15 +46,10 @@ def key_input():
             ui.draw_screen()
             continue
         # if ESC is pressed, clear messageEdit buffer
-        elif ch == 27:
-            ch = editWin.getch()
-            if ch in (0x7f, ord('\b'), curses.KEY_BACKSPACE):
-                gc.ui.messageEdit.reset()
-                call = (ui.draw_edit_win, True)
-                gc.ui_thread.funcs.append(call)
-                while call in gc.ui_thread.funcs or \
-                        call[0].__name__ in gc.ui_thread.locks:
-                    time.sleep(0.01)
+        elif ch == chr(27):
+            gc.ui.messageEdit.reset()
+            call = (ui.draw_edit_win, True)
+            gc.ui_thread.funcs.append(call)
             continue
         ret = gc.ui.messageEdit.addKey(ch)
         if ret is not None:
@@ -65,9 +57,6 @@ def key_input():
             gc.ui.messageEdit.reset()
         call = (ui.draw_edit_win, True)
         gc.ui_thread.funcs.append(call)
-        while not gc.doExit and (call in gc.ui_thread.funcs or \
-                call[0].__name__ in gc.ui_thread.locks):
-            time.sleep(0.01)
     log("key_input finished")
     gc.tasksExited += 1
 
@@ -152,6 +141,8 @@ def parseCommand(command, arg=None):
         elif command in ("quit", "exit"):
             try: gc.exit_thread.start()
             except SystemExit: pass
+            while not gc.doExit:
+                time.sleep(0.01)
         elif command in ("help", 'h'): ui.draw_help()
         elif command in ("guilds", "glds", "servers", "servs"): ui.draw_guildlist()
         elif command in ("channels", "chans"): ui.draw_channellist()

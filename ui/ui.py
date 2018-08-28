@@ -161,7 +161,6 @@ class CursesUi:
             return
         content = curses.newwin(1,self.max_x, self.max_y-1,0)
         content.keypad(True)
-        content.nodelay(True)
         self.editWin = content
 
         self.contentWins.append(content)
@@ -356,10 +355,9 @@ def set_display(string, attrs=0):
     display.addstr("(press q to quit this dialog)")
     display.refresh()
     while True:
-        ch = display.getch()
-        if ch == ord('q'):
+        ch = display.get_wch()
+        if ch == 'q':
             break
-        time.sleep(0.1)
     display.clear()
     gc.ui.toggleDisplay()
     draw_screen()
@@ -504,10 +502,9 @@ def draw_guildlist():
     if len(gc.client.guilds) == 0:
         display.addstr("Error: You are not in any guilds.", gc.ui.colors["red"])
         while True:
-            ch = display.getch()
-            if ch == ord('q'):
+            ch = display.get_wch()
+            if ch == 'q':
                 break
-            time.sleep(0.1)
         display.clear()
         gc.ui.toggleDisplay()
         return
@@ -554,8 +551,8 @@ def draw_guildlist():
             color = serv[1]
             display.addstr(2+serv_id,0, serv[0], color)
         display.addstr(2+serv_id+2,0, "(press q to quit this dialog)", gc.ui.colors["green"])
-        ch = display.getch()
-        if ch == ord('q'):
+        ch = display.get_wch()
+        if ch == 'q':
             break
         if len(buf) > (gc.ui.max_y-5):
             if ch == curses.KEY_UP:
@@ -566,7 +563,6 @@ def draw_guildlist():
                 line_offset = 0
             elif len(buf) > (gc.ui.max_y-5) and line_offset > (len(buf)-(gc.ui.max_y-5)):
                 line_offset = len(buf)-(gc.ui.max_y-5)
-        time.sleep(0.01)
     gc.ui.toggleDisplay()
     gc.ui.refreshAll()
     draw_screen()
@@ -578,10 +574,9 @@ def draw_channellist():
     if len(gc.client.guilds) == 0:
         display.addstr("Error: You are not in any guilds.", gc.ui.colors["red"])
         while True:
-            ch = display.getch()
-            if ch == ord('q'):
+            ch = display.get_wch()
+            if ch == 'q':
                 break
-            time.sleep(0.1)
         display.clear()
         gc.ui.toggleDisplay()
         return
@@ -589,10 +584,9 @@ def draw_channellist():
     if len(gc.client.current_guild.channels) == 0:
         display.addstr("Error: Does this guild not have any channels?", gc.ui.colors["red"])
         while True:
-            ch = display.getch()
-            if ch == ord('q'):
+            ch = display.get_wch()
+            if ch == 'q':
                 break
-            time.sleep(0.1)
         display.clear()
         gc.ui.toggleDisplay()
         return
@@ -616,8 +610,8 @@ def draw_channellist():
             color = chan[1]
             display.addstr(2+chan_id,0, chan[0], color)
         display.addstr(2+chan_id+2,0, "(press q to quit this dialog)", gc.ui.colors["green"])
-        ch = display.getch()
-        if ch == ord('q'):
+        ch = display.get_wch()
+        if ch == 'q':
             break
         if len(buf) > (gc.ui.max_y-5):
             if ch == curses.KEY_UP:
@@ -628,7 +622,6 @@ def draw_channellist():
                 line_offset = 0
             elif len(buf) > (gc.ui.max_y-5) and line_offset > (len(buf)-(gc.ui.max_y-5)):
                 line_offset = len(buf)-(gc.ui.max_y-5)
-        time.sleep(0.01)
     gc.ui.toggleDisplay()
     gc.ui.refreshAll()
     draw_screen()
@@ -640,10 +633,9 @@ def draw_emojilist():
     if len(gc.client.guilds) == 0:
         display.addstr("Error: You are not in any guilds.", gc.ui.colors["red"])
         while True:
-            ch = display.getch()
-            if ch == ord('q'):
+            ch = display.get_wch()
+            if ch == 'q':
                 break
-            time.sleep(0.1)
         display.clear()
         gc.ui.toggleDisplay()
         draw_screen()
@@ -671,8 +663,8 @@ def draw_emojilist():
             color = emoji[1]
             display.addstr(2+emoji_id,0, emoji[0], color)
         display.addstr(2+emoji_id+2,0, "(press q to quit this dialog)", gc.ui.colors["green"])
-        ch = display.getch()
-        if ch == ord('q'):
+        ch = display.get_wch()
+        if ch == 'q':
             break
         if len(emojis) > (gc.ui.max_y-5):
             if ch == curses.KEY_UP:
@@ -683,7 +675,6 @@ def draw_emojilist():
                 line_offset = 0
             elif len(emojis) > (gc.ui.max_y-5) and line_offset > (len(emojis)-(gc.ui.max_y-5)):
                 line_offset = len(emojis)-(gc.ui.max_y-5)
-        time.sleep(0.01)
     gc.ui.toggleDisplay()
     gc.ui.refreshAll()
     draw_screen()
@@ -694,10 +685,9 @@ def draw_userlist():
     if len(gc.client.guilds) == 0:
         display.addstr("Error: You are not in any guilds.", gc.ui.colors["red"])
         while True:
-            ch = display.getch()
-            if ch == ord('q'):
+            ch = display.get_wch()
+            if ch == 'q':
                 break
-            time.sleep(0.1)
         display.clear()
         gc.ui.toggleDisplay()
         draw_screen()
@@ -706,10 +696,9 @@ def draw_userlist():
     if len(gc.client.current_guild.channels) == 0:
         display.addstr("Error: Does this guild not have any channels?", gc.ui.colors["red"])
         while True:
-            ch = display.getch()
-            if ch == ord('q'):
+            ch = display.get_wch()
+            if ch == 'q':
                 break
-            time.sleep(0.1)
         display.clear()
         gc.ui.toggleDisplay()
         draw_screen()
@@ -765,8 +754,8 @@ def draw_userlist():
             color = user[1]
             display.addstr(2+user_id,0, user[0], color)
         display.addstr(2+user_id+2,0, "(press q to quit this dialog)", gc.ui.colors["green"])
-        ch = display.getch()
-        if ch == ord('q'):
+        ch = display.get_wch()
+        if ch == 'q':
             break
         if len(buf) > (gc.ui.max_y-5):
             if ch == curses.KEY_UP:
@@ -777,7 +766,6 @@ def draw_userlist():
                 line_offset = 0
             elif len(buf) > (gc.ui.max_y-5) and line_offset > (len(buf)-(gc.ui.max_y-5)):
                 line_offset = len(buf)-(gc.ui.max_y-5)
-        time.sleep(0.01)
     gc.ui.toggleDisplay()
     gc.ui.refreshAll()
     draw_screen()
@@ -851,8 +839,8 @@ def draw_help(terminateAfter=False):
                     display.addstr('-'*45, segment[1])
                     continue
                 display.addstr(segment[0] + ' ', segment[1])
-        ch = display.getch()
-        if ch == ord('q'):
+        ch = display.get_wch()
+        if ch == 'q':
             break
         if len(buf) > (gc.ui.max_y-5):
             if ch == curses.KEY_UP:
@@ -867,7 +855,6 @@ def draw_help(terminateAfter=False):
                 line_offset = 0
             elif len(buf) > (gc.ui.max_y-5) and line_offset > (len(buf)-(gc.ui.max_y-5)):
                 line_offset = len(buf)-(gc.ui.max_y-5)
-        time.sleep(0.01)
     if terminateAfter:
         raise SystemExit
     gc.ui.toggleDisplay()

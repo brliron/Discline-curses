@@ -1,16 +1,17 @@
 import curses
+from utils.log import log
 
 class MessageEdit:
     def __init__(self, termWidth):
         self.curPos = 0
         self.startPos = 0 # relative to len(inputBuffer)
         self.termWidth = self.width = termWidth
-        self.inputBuffer = []
+        self.inputBuffer = ""
 
     def reset(self):
         self.curPos = 0
         self.startPos = 0
-        del(self.inputBuffer[:])
+        self.inputBuffer = ""
 
     def resize(self):
         pass
@@ -19,7 +20,7 @@ class MessageEdit:
         self.width = self.termWidth - (len(prompt) + 5) - 1
 
     def getCurrentData(self):
-        return (bytearray(self.inputBuffer).decode("utf-8"), self.curPos, self.startPos)
+        return (self.inputBuffer, self.curPos, self.startPos)
 
     def addKey(self, ch):
         # check if character is function character
@@ -44,17 +45,19 @@ class MessageEdit:
         # TODO: Implement edit last message on KEY_UP
         elif ch == curses.KEY_UP or ch == curses.KEY_DOWN:
             pass
-        elif ch in (0x7f, ord('\b'), curses.KEY_BACKSPACE):
+        elif ch in (chr(0x7f), '\b', curses.KEY_BACKSPACE):
             if self.curPos > 0:
-                self.inputBuffer.pop(self.curPos-1)
+                self.inputBuffer = self.inputBuffer[:self.curPos - 1] + self.inputBuffer[self.curPos:]
                 self.curPos -= 1
             if self.startPos > 0 and self.curPos == self.startPos:
                 self.startPos -= 1
-        elif ch == ord('\n'):
-            return bytearray(self.inputBuffer).decode("utf-8")
+        elif ch == '\n':
+            return self.inputBuffer
+        elif not isinstance(ch, str):
+            log("Unknown key " + str(ch))
         # Normal text
         else:
-            self.inputBuffer.insert(self.curPos, ch)
+            self.inputBuffer = self.inputBuffer[:self.curPos] + ch + self.inputBuffer[self.curPos:]
             self.curPos += 1
         if self.curPos-self.startPos > self.width:
             self.startPos += 1

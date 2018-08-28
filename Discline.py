@@ -32,6 +32,8 @@ init_complete = False
 
 # Set terminal X11 window title
 print('\33]0;Discline\a', end='', flush=True)
+# Set the timeout for the ESC key to 25ms
+os.environ.setdefault('ESCDELAY', '25')
 
 gc.initClient()
 
