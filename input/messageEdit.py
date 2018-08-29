@@ -53,6 +53,9 @@ class MessageEdit:
                 self.curPos -= 1
             if self.startPos > 0 and self.curPos == self.startPos:
                 self.startPos -= 1
+        elif ch == curses.KEY_DC:
+            if self.curPos < len(self.inputBuffer):
+                self.inputBuffer = self.inputBuffer[:self.curPos] + self.inputBuffer[self.curPos + 1:]
         elif ch == '\n':
             return self.inputBuffer
         elif not isinstance(ch, str):
