@@ -32,6 +32,8 @@ class MessageEdit:
             # if inputBuffer fits into line
             self.curPos = len(self.inputBuffer)
             self.startPos = self.curPos - self.width
+            if self.startPos < 0:
+                self.startPos = 0
         elif ch == curses.KEY_LEFT:
             # curPos is greater than 0
             if self.curPos > 0:
